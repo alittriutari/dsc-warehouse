@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Product;
-use App\ProductCategory;
+use App\Employee;
 
-class ProductController extends Controller
+class EmployeeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,8 +15,9 @@ class ProductController extends Controller
     public function index()
     {
         //
-        $data['datas'] = Product::get();
-        return view('product.index',$data);
+        $employee = new Employee;
+        $datas = $employee->all();
+        return view('employee.index')->with('datas', $datas); //ngepass variabel ke view
     }
 
     /**
@@ -28,9 +28,7 @@ class ProductController extends Controller
     public function create()
     {
         //
-        $datas = ProductCategory::get();
-        
-        return view('product.create', compact('datas'));
+        return view('employee.create');
     }
 
     /**
@@ -41,23 +39,28 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        //
+        // $employee = new Employee;
+
+        // $this->validate()
+
         $request->validate([
-            'name' => 'required|min:3',
-            'category_id',
-            'price' => 'required|min:3',
-            'description' => 'required|min:3'
+            'id_pegawai' => 'required',
+            'nama' => 'required|min:3',
+            'alamat' => 'required|min:3',
+            'jenis_kelamin' => 'required|min:3'
         ]);
         
-        $product = new Product;
+        $employee = new Employee;
         
-        $product->name = $request->name;
-        $product->category_id = $request->category_id;
-        $product->price = $request->price;
-        $product->description = $request->description;
+        $employee->id_pegawai = $request->id_pegawai;
+        $employee->nama = $request->nama;
+        $employee->alamat = $request->alamat;
+        $employee->jenis_kelamin = $request->jenis_kelamin;
 
-        $product->save();
+        $employee->save();
 
-        return redirect()->route('product.index');
+        return redirect()->route('employee.index');
     }
 
     /**
@@ -69,7 +72,6 @@ class ProductController extends Controller
     public function show($id)
     {
         //
-
     }
 
     /**
@@ -80,7 +82,12 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
+        //
+        $employee = new Employee;
 
+        $employeeData = $employee->where('id', $id)->first();
+
+        return view('employee.edit')->with('employee', $employeeData);
     }
 
     /**
@@ -93,6 +100,23 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $this->validate($request, [
+            'id_pegawai',
+            'nama',
+            'alamat',
+            'jenis_kelamin'
+        ]);
+
+        $employee = new Employee;
+        
+        $employee->id_pegawai = $request->id_pegawai;
+        $employee->nama = $request->nama;
+        $employee->alamat = $request->alamat;
+        $employee->jenis_kelamin = $request->jenis_kelamin;
+
+        $employee->save();
+
+        return redirect()->route('employee.index');
     }
 
     /**

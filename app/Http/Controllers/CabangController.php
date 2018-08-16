@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Product;
-use App\ProductCategory;
+use App\Cabang;
 
-class ProductController extends Controller
+class CabangController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,9 +14,15 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
-        $data['datas'] = Product::get();
-        return view('product.index',$data);
+        //all
+        // $cabang = new Cabang;
+        // $datas = $cabang->all();
+        // return view('cabang.index')->with('datas', $datas); //ngepass variabel ke view
+
+        //get
+        $data['datas'] = Cabang::get();
+        return view('cabang.index',$data);
+
     }
 
     /**
@@ -28,9 +33,7 @@ class ProductController extends Controller
     public function create()
     {
         //
-        $datas = ProductCategory::get();
-        
-        return view('product.create', compact('datas'));
+        return view('cabang.create');
     }
 
     /**
@@ -41,23 +44,20 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        //
         $request->validate([
-            'name' => 'required|min:3',
-            'category_id',
-            'price' => 'required|min:3',
-            'description' => 'required|min:3'
+            'nama_cabang' => 'required|min:3',
+            'alamat' => 'required|min:3'
         ]);
         
-        $product = new Product;
+        $cabang = new Cabang;
         
-        $product->name = $request->name;
-        $product->category_id = $request->category_id;
-        $product->price = $request->price;
-        $product->description = $request->description;
+        $cabang->nama_cabang = $request->nama_cabang;
+        $cabang->alamat = $request->alamat;
 
-        $product->save();
+        $cabang->save();
 
-        return redirect()->route('product.index');
+        return redirect()->route('cabang.index');
     }
 
     /**
@@ -69,7 +69,6 @@ class ProductController extends Controller
     public function show($id)
     {
         //
-
     }
 
     /**
@@ -80,7 +79,8 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-
+        $data['cabang'] = Cabang::find($id);
+        return view('cabang.edit',$data);
     }
 
     /**
@@ -92,7 +92,22 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //validate
+        $this->validate($request,[
+            'nama_cabang' => 'required|min:3',
+            'alamat' => 'required|min:3'
+        ]);
+
+        //request data
+        //definisi data
+        $req = [
+            'nama_cabang' => $request->nama_cabang,
+            'alamat' => $request->alamat
+        ];
+
+        $data = Cabang::where('id',$id)->update($req);
+
+        return redirect()->route('cabang.index');
     }
 
     /**
@@ -104,5 +119,7 @@ class ProductController extends Controller
     public function destroy($id)
     {
         //
+        Cabang::where('id',$id)->delete();
+        return response()->json($id);
     }
 }
